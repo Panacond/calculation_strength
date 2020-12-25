@@ -2,7 +2,7 @@
 расчеты на прочность по различным  СП
 файл запускающий меню  Listbox4
 язык python
-для работы WC code
+для работы VS code
 python -m venv .venv
 для запуска обновлений
 .venv\scripts\activate
