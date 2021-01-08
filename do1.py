@@ -1,3 +1,4 @@
+# сохраняем все в ворлд
 def world(name, text_calc, loads):
     from docx import Document
     from docx.shared import Mm
@@ -49,14 +50,15 @@ def world(name, text_calc, loads):
         os.remove(name +'3 M.png')
         p.add_run('').math = True
 
-    document.add_heading('Расчетная часть', level=1)
-    if '\n\n' in text_calc:
-        text_calc = text_calc.replace('\n\n','\n')
-    if '\t' in text_calc:
-        text_calc = text_calc.replace('\t','    ')
-    text_lisp = text_calc.split('\n')
-    for i in text_lisp:
-        document.add_paragraph(i)
+    if len(text_calc) > 1:
+        document.add_heading('Расчетная часть', level=1)
+        if '\n\n' in text_calc:
+            text_calc = text_calc.replace('\n\n','\n')
+        if '\t' in text_calc:
+            text_calc = text_calc.replace('\t','    ')
+        text_lisp = text_calc.split('\n')
+        for i in text_lisp:
+            document.add_paragraph(i)
     try:
         document.save(name +'.docx')
     except:
