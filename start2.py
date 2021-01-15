@@ -61,7 +61,7 @@ def main():
     f = []# создание списка файлов и чтение из текущей папки списка файлов
     fin = '' #выводящий текст
     for file in os.listdir('.'):
-        if fnmatch.fnmatch(file, '*файл.csv'):
+        if fnmatch.fnmatch(file, '*.csv'):
             f += [file]
     for i in f:
         # работа с одним файлом создание таблицы, рисунки, текст ворлд
@@ -71,14 +71,19 @@ def main():
         tabl_load, tabl_moment, tabl_stress = tabl_3(l)
         # запись файла нагрузок в ексель файл
         # Q, MT = finish_load(l = tabl_load, name_file = i )
-        import load12
-        Q, MT = load12.load_donload(l = tabl_load, name_file = i )
-        # Убираем последнюю сторку с общими выводами
-        MT=MT[:-1]
-        # добавляем нагрузки в вывод результатов в меню
-        fin += '\n\n'+ name + last_2_lines(MT)
-        dict_load = {'Q1':Q[0],'Q2':Q[1],'Q3':Q[2],'Q4':Q[3]}
-        dict_all = {'Q1':Q[0],'Q2':Q[1],'Q3':Q[2],'Q4':Q[3],'S1':0,'S2':0,'S3':0,'S4':0, 'S5':0}
+        # запуск расчета нагрузок
+        if len(tabl_load)>=1:
+            import load12
+            Q, MT = load12.load_donload(l = tabl_load, name_file = i )
+            # Убираем последнюю сторку с общими выводами
+            MT=MT[:-1]
+            # добавляем нагрузки в вывод результатов в меню
+            fin += '\n\n'+ name + last_2_lines(MT)
+            dict_load = {'Q1':Q[0],'Q2':Q[1],'Q3':Q[2],'Q4':Q[3]}
+            dict_all = {'Q1':Q[0],'Q2':Q[1],'Q3':Q[2],'Q4':Q[3],'S1':0,'S2':0,'S3':0,'S4':0, 'S5':0}
+        else:
+            dict_all = {'S1':0,'S2':0,'S3':0,'S4':0, 'S5':0}
+            MT =[]
         # создание эпюр
         import matplotlib_moment_beam_PQ2
         graph = matplotlib_moment_beam_PQ2.plot_csv_file
@@ -92,6 +97,8 @@ def main():
                 a = str(dict_all[nx])
                 tabl_stress[i][2] = a
         # выполнение расчета на усилия !
+        # создание файла результатов, для работы с файлами без результатов
+        text_rezult = ''
         if tabl_stress != []:
             # бетонные и жб балки
             if tabl_stress[0][0]=='CBR':
@@ -143,10 +150,10 @@ def main():
             if tabl_stress[0][0]=='SCA':
                 import FormulaStringCalculation
                 text_rezult = FormulaStringCalculation.CBR(name = name, tabl = tabl_stress[1:] )
-            # запись в ворлд файл
-            import do1
-            do1.world(name = name, text_calc = text_rezult, loads= MT)
-        # добавляем результаты расчета вывод результатов в меню 
+        # запись в ворлд файл
+        import do1
+        do1.world(name = name, text_calc = text_rezult, loads= MT)
+        # добавляем результаты расчета вывод результатов в меню
         try:
             fin +=  last_2_lines(text_rezult)
         except:
@@ -158,5 +165,5 @@ if __name__ == '__main__':
 
 def main1():
     fin = main()
-    return fin 
+    return fin
 
