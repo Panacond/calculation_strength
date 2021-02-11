@@ -20,6 +20,14 @@ def tabl_taxt(tabl):
 def calculation(name, text_file):
     txt = string_calculation.Calc()
     t = text_file
+    # добавление номеров слоев
+    n = 1
+    while 'h=' in t:
+        t=t.replace('h=','h_'+str(n) +'=',1)
+        t=t.replace('g=','g_'+str(n) +'=',1)
+        t=t.replace('\\nu=','\\nu_'+str(n) +'=',1)
+        t=t.replace('E=','E_'+str(n) +'=',1)
+        n +=1
     # поиск и замена с помощью регулярных выражений
     t='''Определение расчетного сопротивление под подошвой фундамента
 расчет по СП 22.13330.2011 ОСНОВАНИЯ ЗДАНИЙ И СООРУЖЕНИЙ
@@ -122,7 +130,7 @@ p_d=p_s-\\sigma_zg0
 '''
     txt.c1(text = t, n_letter = 90, charge = '  ')
     import table_aw
-    Aw = table_aw.all(txt.numer['n_s'],txt.numer['\\nu'])
+    Aw = table_aw.all(txt.numer['n_s'],txt.numer['\\nu_1'])
     #print(Aw)
     t = 'Значение коэффициента эквивалентного слоя для жестких фундаментов по таблице 4.3:\n'
     t += 'A_w=' + str(Aw) + '\n'

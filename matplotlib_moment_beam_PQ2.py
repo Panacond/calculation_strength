@@ -205,13 +205,16 @@ def plot_G(save, tit, x, y):
     return min_rezult, max_rezult
 def share_paint(x1, x2, t):
     'построение распределенной нагрузки'
-    plt.annotate( ' ', xy=(x1, 0), xytext=(x1, 1), 
-            arrowprops=dict(facecolor='red', shrink=0.01, ec = 'r'), size = 10, ha = 'center')
-    plt.annotate( ' ', xy=(x2, 0), xytext=(x2, 1), 
-            arrowprops=dict(facecolor='red', shrink=0.01, ec = 'r'), size = 10, ha = 'center')
-    plt.annotate( t, xy=((x2+x1)/2, 0), xytext=((x2+x1)/2, 1), 
-            arrowprops=dict(facecolor='red', shrink=0.01, ec = 'r'), size = 15, ha = 'center')
-    plt.plot([x1, x2], [0.9, 0.9], color = 'r')
+    def f_all(xx):
+        '''построение одной стрелочки распределенной нагрузки '''
+        plt.annotate( ' ', xy=(xx, 0), xytext=(xx, 1), 
+        arrowprops=dict(facecolor='red', shrink=0.01, ec = 'r'), size = 10, ha = 'center')
+    dx=(x2-x1)/11
+    list_Q=list([round(x1+i*dx,2) for i in range(12)])
+    plt.text((x2+x1)/2, 1, t, fontsize=15, ha='center')
+    for i in list_Q:
+        f_all(i)
+    plt.plot([x1, x2], [0.95, 0.95], color = 'r')
 def forse_paint(x, t):
     'постороение силы'
     plt.annotate(t, xy=(x, 0), xytext=(x, 2), 
@@ -273,7 +276,7 @@ def plot_csv_file(f, name, dict_load):
             if i[1] in ['Q1', 'Q2', 'Q3', 'Q4']:
                 a = dict_load[i[1]]
                 if i[5] != '':
-                    k=replase_point(i[5])
+                    k= replase_point(i[5])
                     a = replase_point(a)*k
             else:
                 a = replase_point(i[1])
@@ -286,7 +289,7 @@ def plot_csv_file(f, name, dict_load):
                 c = i[3].replace('L',str(L))
                 c = replase_point(c)*replase_point(i[4])
             else:
-                c =replase_point(i[3])
+                c = replase_point(i[3])
             B1.addQ(a,b,c)
         if i[0] == 'P':
             if i[1] in ['Q1', 'Q2', 'Q3', 'Q4']:

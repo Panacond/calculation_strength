@@ -61,6 +61,11 @@ k_1=P_r/R_f'''
     p = txt.finish(name = name)
     print(p)
     text_file = txt.rezult
+    # замена текста
+    text_file = text_file.replace('фундамента  гс/м^3: \nG_1=','фундамента  гс/м^3: G_1=') 
+    text_file = text_file.replace('пола подвала (м): \nd_b=','пола подвала (м): d_b=')
+    text_file = text_file.replace('меньше 10 м:\nk_s=','меньше 10 м: k_s=')
+    text_file = text_file.replace('G_2+m_o \\times c_2 \\times 100)=','G_2+m_o \\times c_2 \\times 100)=\n=')
     return text_file
 
 def main():

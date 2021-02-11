@@ -38,7 +38,8 @@ def world(name, text_calc, loads):
     
     import os
     if os.access(name +'1.png',os.F_OK):
-        document.add_heading('Усилия', level=1)
+        # добавление заколовка
+        # document.add_heading('Усилия', level=1) 
         p = document.add_paragraph('Напряжения в элементе:')
 
         document.add_picture(name +'1.png' , width=Mm(160))
@@ -51,7 +52,7 @@ def world(name, text_calc, loads):
         p.add_run('').math = True
 
     if len(text_calc) > 1:
-        document.add_heading('Расчетная часть', level=1)
+        # document.add_heading('Расчетная часть', level=1)
         if '\n\n' in text_calc:
             text_calc = text_calc.replace('\n\n','\n')
         if '\t' in text_calc:
@@ -61,8 +62,10 @@ def world(name, text_calc, loads):
             document.add_paragraph(i)
     try:
         document.save(name +'.docx')
+        return ""
     except:
         print('Закрой файл ворлда!!!')
+        return '\nЗакрой файл ворлда!!!'
 
 def main():
     name ='2Балка'

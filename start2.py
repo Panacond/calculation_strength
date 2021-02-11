@@ -1,4 +1,5 @@
-#будем читать один общий файл и по данным из него выполнять расчеты
+#!C:\Users\ivashkevich\Desktop\01_вычисления по формулам\11_все и сразу\.venv\Scripts python
+# будем читать один общий файл и по данным из него выполнять расчеты
 import os, csv, fnmatch
 
 def read_file(a):
@@ -70,7 +71,6 @@ def main():
         # Получил 3 списка для разных таблиц
         tabl_load, tabl_moment, tabl_stress = tabl_3(l)
         # запись файла нагрузок в ексель файл
-        # Q, MT = finish_load(l = tabl_load, name_file = i )
         # запуск расчета нагрузок
         if len(tabl_load)>=1:
             import load12
@@ -83,13 +83,14 @@ def main():
             dict_all = {'Q1':Q[0],'Q2':Q[1],'Q3':Q[2],'Q4':Q[3],'S1':0,'S2':0,'S3':0,'S4':0, 'S5':0}
         else:
             dict_all = {'S1':0,'S2':0,'S3':0,'S4':0, 'S5':0}
-            MT =[]
+            dict_load =[]
+            MT=[]
         # создание эпюр
         import matplotlib_moment_beam_PQ2
         graph = matplotlib_moment_beam_PQ2.plot_csv_file
         if tabl_moment != []:
             stress = graph(f = tabl_moment, name = name, dict_load = dict_load )
-            dict_all ={'Q1':Q[0],'Q2':Q[1],'Q3':Q[2],'Q4':Q[3],'S1':stress[0],'S2':stress[1],'S3':stress[2],'S4':stress[3], 'S5':stress[4]}
+            dict_all['S1'],dict_all['S2'],dict_all['S3'],dict_all['S4'],dict_all['S5']=stress[0],stress[1],stress[2],stress[3],stress[4]
         len_stress = len(tabl_stress)
         for i in range(len_stress):
             if tabl_stress[i][2] in ['Q1', 'Q2', 'Q3', 'Q4','S1', 'S2', 'S3', 'S4', 'S5']:
@@ -97,8 +98,6 @@ def main():
                 a = str(dict_all[nx])
                 tabl_stress[i][2] = a
         # выполнение расчета на усилия !
-        # создание файла результатов, для работы с файлами без результатов
-        text_rezult = ''
         if tabl_stress != []:
             # бетонные и жб балки
             if tabl_stress[0][0]=='CBR':
@@ -120,6 +119,9 @@ def main():
             if tabl_stress[0][0]=='SCS':
                 import SteelColumnSection
                 text_rezult = SteelColumnSection.SBS(name = name, tabl = tabl_stress[1:] )
+            if tabl_stress[0][0]=='SBM':
+                import SteelColumnMoment
+                text_rezult = SteelColumnMoment.SBS(name = name, tabl = tabl_stress[1:] )
             # деревянные конструкции
             if tabl_stress[0][0]=='WBS':
                 import WoodBeamSection
@@ -140,6 +142,12 @@ def main():
             if tabl_stress[0][0]=='BFG':
                 import BaseFallout
                 text_rezult = BaseFallout.BRG(name = name, tabl = tabl_stress[1:] )
+            if tabl_stress[0][0]=='HDP':
+                import hangingDrillingPile
+                text_rezult = hangingDrillingPile.FIN(name = name, tabl = tabl_stress[1:] )
+            if tabl_stress[0][0]=='FSB':
+                import FoundationStrengthBase
+                text_rezult = FoundationStrengthBase.FIN(name = name, tabl = tabl_stress[1:] )
             # бетонные и жб колонны
             if tabl_stress[0][0]=='CCN':
                 import ConcreteColumnNoArm
@@ -150,13 +158,16 @@ def main():
             if tabl_stress[0][0]=='SCA':
                 import FormulaStringCalculation
                 text_rezult = FormulaStringCalculation.CBR(name = name, tabl = tabl_stress[1:] )
-        # запись в ворлд файл
-        import do1
-        do1.world(name = name, text_calc = text_rezult, loads= MT)
-        # добавляем результаты расчета вывод результатов в меню
+            # запись в ворлд файл
+            import do1
+            fin_dop = do1.world(name = name, text_calc = text_rezult, loads= MT)
+        # добавляем результаты расчета вывод результатов в меню 
         try:
+            fin += fin_dop
             fin +=  last_2_lines(text_rezult)
+            
         except:
+            # fin += fin_dop
             pass
     return fin
 
@@ -165,5 +176,5 @@ if __name__ == '__main__':
 
 def main1():
     fin = main()
-    return fin
+    return fin 
 

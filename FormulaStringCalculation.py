@@ -21,7 +21,7 @@ def calculation(name, text_file):
     txt = string_calculation.Calc()
     t = text_file
     print(t)
-    txt.c1(text=t, n_letter=1)
+    txt.c1(text=t, n_letter=60)
     p = txt.finish(name = name)
     print(p)
     text_file = txt.rezult

@@ -32,7 +32,7 @@ def calculation(name, text_file):
     number_concrete = int(find_concrete[1:])
     t += 'R_b='+ str(concrete[number_concrete]) +'\n'
     t += 'E_b='+ str(ung[number_concrete])+'\n'
-    t='''Расчет бетонного элемента на действие вертикальных нагрузок
+    t='''Расчет железобетонного элемента на действие вертикальных нагрузок
 Расчет по СП 52-101-2007 Бетонные и железобетонные конструкции без предварительного напряжения
 '''+t
     txt.c1(t,120)
@@ -126,10 +126,12 @@ M_cM=M_0+(M_0-M_1)*\eta_h
     txt.c1(t)
     if txt.numer['M_cN'] >txt.numer['M_cM']:
         t='''Расчетный момент примем от продольной силой с эксцентриситетом (кгс \\times м):
-M_c=M_cN'''
+M_c=M_cN
+'''
     else:
         t= '''Расчетный момент примем от моментов с учетом прогиба (кгс \\times м):
-M_c=M_cM'''
+M_c=M_cM
+'''
     txt.c1(t)
     t='''Проверяем прочность сечения согласно п. 3.56
 a_n=N_0/(R_b*t_c*h_0*100)
@@ -161,8 +163,10 @@ k_2=M_c/M_r'''
     text_print = '\n'.join(p.split('\n')[-4:])
     print(text_print)
     text_file = txt.rezult
+    # замена не удобных данных
     a ='класса\nВ'
-    text_file = text_file.replace(a, 'класса В')
+    b = 'класса В'
+    text_file = text_file.replace(a, b)
     a = 'D=(E_b \\times t_c \\times h_c^3)/10^10 \\times (0.0125/(\\varphi \\times (0.3+\\delta))+0.175 \\times \\mu_a \\times ((h_0-a)/h_c)^2)='
     text_file = text_file.replace(a, a + '\n=')
     a = 'M_r=(R_b \\times t_c \\times x)/10 \\times (h_0-x/2)+(R_s \\times A_s \\times 10) \\times (h_0-a) \\times 1/10^3='
