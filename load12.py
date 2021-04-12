@@ -39,7 +39,7 @@ def read_load(l):
 def read_file(a):
     a = str(a) + '.csv'
     l=[]
-    with open(a,'r',newline='') as file:
+    with open(a,'r',newline='', encoding='utf-8') as file:
         reader = csv.reader(file)
         for row in reader:
             l = l + [row]
@@ -78,7 +78,7 @@ def table_load(l):
     sum_place = [0,0] #сумма в одном загружений
     sum_local = [0,0] #сумма по этажу
     sum_all=[0,0] #общая сумма всех нагрузок
-    list_name = [] #список названий (постоянные, времеенные...)
+    list_name = [] #список названий (постоянные, временные...)
     dict_load_n = {} #словарь загружений нормативных
     dict_load_r = {} #словарь загружений расчетных
     i_type = '' # текущий тип нагрузки(постоянная)
@@ -112,7 +112,7 @@ def table_load(l):
                 i[3]=1000
                 text = i[0]+' G='+str(round(i[2]))+' кг'
             else:
-                text = i[0]+' G='+str(round(i[2]))+' кг t='+str(round(i[3]))+' мм'
+                text = i[0]+' G='+str(round(i[2]))+' кг/м.куб t='+str(round(i[3]))+' мм'
             a = i[2:-1]
             for j in a:
                 dense *= j
@@ -134,7 +134,7 @@ def table_load(l):
                 for i in sort_dict(dict_load_n):
                     MT +=[['Всего ' + i.lower() ,index[1],dict_load_n[i],'',dict_load_r[i]]]
                 MT +=[['Сумма всех нагрузок',index[1],sum_all[0],'',sum_all[1]]]
-                MT +=[['Фактическая постоянная расчетная распределенная нагрузка от веса конструкций составляет '+str(sum_all[1])+' '+index[1]+' (нормативная нагрузка '+ str(sum_all[0])+' '+index[1]+ ')']]
+                MT +=[['Фактическая постоянная расчетная распределенная нагрузка от веса конструкций\nсоставляет '+str(sum_all[1])+' '+index[1]+' (нормативная нагрузка '+ str(sum_all[0])+' '+index[1]+ ')']]
                 
     len_dop = len(list_name)
     return MT, len_dop
@@ -274,7 +274,6 @@ def calc(MT, name):
     sheet.column_dimensions['C'].width = 12
     sheet.column_dimensions['D'].width = 9
     sheet.column_dimensions['E'].width = 15
-
     wb.save(name + '.xlsx')
     # Печать итогов
     print(name)
@@ -287,7 +286,7 @@ def calc(MT, name):
     Q4 = MT[-2:][0][-1]
     Q = [Q1, Q2, Q3, Q4]
     return Q, MT
-# доплнения к существющему расчету
+# дополнение к существующему расчету
 def pre_calc(name):
     l = read_file(name)
     MT, len_dop=table_load(l)

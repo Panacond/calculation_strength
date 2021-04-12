@@ -1,21 +1,6 @@
+# -*- coding: utf-8 -*-
 # чтение из csv файла данных и расчет балки
-import os, fnmatch, csv
 import string_calculation
-
-def read_file(a):
-    a = str(a)
-    l=[]
-    with open(a,'r',newline='') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            l = l + [row]
-    return tabl_taxt(l)
-
-def tabl_taxt(tabl):
-    text_file = ''
-    for i in tabl:
-        text_file += i[0] + '\t' + i[1] + i[2] + '\n'
-    return text_file
 
 def calculation(name, text_file):
     txt = string_calculation.Calc()
@@ -38,12 +23,13 @@ def calculation(name, text_file):
     +t)
     t=t.replace('класса\t','класса ')
     txt.c1(t,60)
-    t = ('Определение несущей способности элемента по прочности.\n'
-    'Определение h_0:\n'
-    'h_0=h_b-a_1\n'
-    'Ширина железобетонного элемента (мм):\n'
-    '3.21. Определение коэффициента a_m по формуле (3.22)\n'
-    'a_m=(M_r*10000)/(R_b*b_1*h_0^2)\n')
+    t = '''Определение несущей способности элемента по прочности.
+Определение h_0:
+h_0=h_b-a_1
+Ширина железобетонного элемента (мм):
+3.21. Определение коэффициента a_m по формуле (3.22)
+a_m=(M_r*10000)/(R_b*b_1*h_0^2)
+'''
     txt.c1(t)
     if txt.numer['R_s'] < 242:
         t = '''Принимаем значения коэффициентов по табл.3.2 пособия
@@ -64,7 +50,7 @@ e_r=0.493'''
     txt.c1(t)
     if txt.numer['a_m'] < txt.numer['a_r']:
         t = '''
-3.21. Расчет ведем из условия, что верхняя арматура не требуется a_m < a_r
+3.21. Расчет ведем из условия, что верхняя арматура не требуется a_m < a_r.
 Необходимая площадь армирования составит (см^2):
 A_s=(R_b*b_1*h_0*(1-\sqrt(1-2*a_m)))/(R_s*100)'''
     else:
@@ -85,25 +71,19 @@ k=A_s/A_i'''
     print(text_print)
     text_file = txt.rezult
     # замена текста
-    text_file = text_file.replace('\ne_r=',';    e_r=')
+    # text_file = text_file.replace('\ne_r=',';    e_r=')
     text_file = text_file.replace('класса\nВ','класса В')    
     return text_file
 
 def main():
-    # отбор нужных файлов
-    f = []# создание списка файлов и чтение из текущей папки списка файлов
-    for file in os.listdir('.'):
-        if fnmatch.fnmatch(file, '*CBR.csv'):
-            f += [file]
-    for i in f:
-        text_file = read_file(i)
-        name = i[:-7]
-        text_file = calculation(name, text_file)
-    pass
+    # вычисление всех файлов в папке
+    from support_function import write_filesAnd_calc
+    write_filesAnd_calc(end_of_file_name='*CBR.csv', calculation = calculation)
 
 if __name__ == '__main__':
     main()
 def CBR(name, tabl):
+    from support_function import tabl_taxt
     text_file = tabl_taxt(tabl)
     text_file = calculation(name, text_file)
     return text_file

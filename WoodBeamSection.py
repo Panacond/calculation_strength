@@ -99,7 +99,7 @@ k_1=k_1*1'''
     p = txt.finish(name = name)
     # print(p)
     text_print ='\n'.join( p.split('\n')[-5:])
-    print(text_print)
+    # print(text_print)
     text_file = txt.rezult
     # замена не удобных данных
     text_file = text_file.replace("составит (кгс  \\times м):\nM_y=", "составит (кгс  \\times м): M_y=")
@@ -120,7 +120,7 @@ def main():
         text_file = read_file(i)
         name = i[:-7]
         text_file = calculation(name, text_file)
-        print(text_file)
+        # print(text_file)
     pass
 
 if __name__ == '__main__':

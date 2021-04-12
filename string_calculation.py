@@ -4,12 +4,12 @@
 #!!!Функции
 # печать в файл
 def write_file(name_file, text):
-    f = open(name_file +'.txt', 'w')
+    f = open(name_file +'.txt', 'w', encoding='utf-8')
     f.write(text)
     f.close()
 
 # добавление в словарь коментарий и формул
-#выбор нужных симоволов
+# выбор нужных симоволов
 def sele(a):
     l=len(a)
     b='1234567890.'
@@ -25,6 +25,7 @@ def sele(a):
         d=True
     return(d)
 
+#!!! классы
 class Calc (object):
     '''класс выполнения вычислений добавляем текстовую строку из кода программы'''
     def __init__(self):
@@ -98,7 +99,7 @@ class Calc (object):
             if rez != None:
                 rez = rez.replace('**', '^')
                 rez = rez.replace('*',' \\times ' ) #' \\times ')
-                rez = rez.replace('%', ' \\sqrt ')
+                rez = rez.replace('%', '\\sqrt ')
         return rez
     def c1(self, text, n_letter = 1, charge = '\t'):
         # выполнение подстановка строки и выполнение вычислений
@@ -136,7 +137,7 @@ class Calc (object):
 #расчет текстовых файлов
 # открытие файла с формулами
 def read_file(a):
-    f = open(a +'.txt', 'r')
+    f = open(a +'.txt', 'r', encoding='utf-8')
     l = f.read()
     f.close()
     return l
@@ -185,3 +186,19 @@ def main1():
     print(fin1)
     return(fin1)
 
+def main3():
+    # запуск из меню и замена " \\times " на * 
+    fin1 = ""
+    for i in read_folder():
+        txt = Calc()
+        text1 = read_file(i)
+        txt.c1(text1, 27)# число символов в одной строке
+        p = txt.finish(name = i)
+        p=p.replace(" \\times ", '*')
+        write_file(i, p)
+        #вывод на экран 2 последних строк
+        fin = p.split('\n')
+        fin = fin[-2] + '\n' + fin[-1]
+        fin1 += '\n' + str(i) + '\n' + fin
+    print(fin1)
+    return(fin1)

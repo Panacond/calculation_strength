@@ -102,7 +102,7 @@ def test_31():
 
 
 import FoundationStrengthBase
-# проверка расчета просчности грунта
+# проверка расчета прочности грунта
 def test_41():
     # проверка таблицы 5.12
     corner = 15
@@ -141,3 +141,85 @@ def test_43():
     list_file = text_file.split('\n')
     a = list_file[-2:-1][0]
     assert  a == 'k=P_0/N_u=10728.0/11271.4=0.95'
+# проверка вычисления усилий
+import matplotlib_moment_beam_PQ2
+
+def test_51():
+    name ='Балка шарнирная сосредоточенная'
+    L = 6
+    B1 = matplotlib_moment_beam_PQ2.Graph(L = L ,S = 0)
+    B1.addP(1200, 3)
+    # a = matplotlib_moment_beam_PQ2.plot_all(L, B1, name)
+    a = matplotlib_moment_beam_PQ2.test_all(L, B1, name)
+    b = ['600.0','600.0','1800.0','0.0', 6,'5400.0']
+    assert  a == b
+
+def test_52():
+    name ='Балка шарнирная распределенная'
+    L = 6
+    B1 = matplotlib_moment_beam_PQ2.Graph(L = L ,S = 0)
+    B1.addQ(100, 0, 6)
+    # a = matplotlib_moment_beam_PQ2.plot_all(L, B1, name)
+    a = matplotlib_moment_beam_PQ2.test_all(L, B1, name)
+    b = ['300.0','300.0','450.0','0.0', 6,'1687.5']
+    assert  a == b
+
+def test_54():
+    name ='Балка защемленная с 1 стороны сосредоточенная'
+    L = 6
+    B1 = matplotlib_moment_beam_PQ2.Graph(L = L ,S = 1)
+    B1.addP(1200, 3)
+    # a = matplotlib_moment_beam_PQ2.plot_all(L, B1, name)
+    a = matplotlib_moment_beam_PQ2.test_all(L, B1, name)
+    b = ['375.0','825.0','1125.0','1350.0', 6,'2414.81']
+    assert  a == b
+
+def test_55():
+    name ='Балка защемленная с 1 стороны распределенная'
+    L = 6
+    B1 = matplotlib_moment_beam_PQ2.Graph(L = L ,S = 1)
+    B1.addQ(100, 0, 6)
+    # a = matplotlib_moment_beam_PQ2.plot_all(L, B1, name)
+    a = matplotlib_moment_beam_PQ2.test_all(L, B1, name)
+    b = ['225.0', '375.0', '252.0', '450.0', 6, '699.84']
+    assert  a == b
+
+def test_56():
+    name ='Балка защемленная с 2 сторон сосредоточенная'
+    L = 6
+    B1 = matplotlib_moment_beam_PQ2.Graph(L = L ,S = 2)
+    B1.addP(1200, 3)
+    # a = matplotlib_moment_beam_PQ2.plot_all(L, B1, name)
+    a = matplotlib_moment_beam_PQ2.test_all(L, B1, name)
+    b = ['600.0', '600.0', '900.0', '900.0', 6, '1350.0']
+    assert  a == b
+
+def test_57():
+    name ='Балка защемленная с 2 сторон распределенная'
+    L = 6
+    B1 = matplotlib_moment_beam_PQ2.Graph(L = L ,S = 2)
+    B1.addQ(100, 0, 6)
+    # a = matplotlib_moment_beam_PQ2.plot_all(L, B1, name)
+    a = matplotlib_moment_beam_PQ2.test_all(L, B1, name)
+    b = ['300.0', '300.0', '150.0', '300.0', 6, '337.5']
+    assert  a == b
+def test_58():
+    name ='Балка консольная сосредоточенная'
+    L = 6
+    B1 = matplotlib_moment_beam_PQ2.Graph(L = L ,S = 3)
+    B1.addP(1200, 3)
+    # a = matplotlib_moment_beam_PQ2.plot_all(L, B1, name)
+    a = matplotlib_moment_beam_PQ2.test_all(L, B1, name)
+    b = ['0.0', '1200.0', '0.0', '3600.0', 6, '27000.0']
+    assert  a == b
+
+def test_59():
+    name ='Балка консольная распределенная'
+    L = 6
+    B1 = matplotlib_moment_beam_PQ2.Graph(L = L ,S = 3)
+    B1.addQ(100, 0, 6)
+    # a = matplotlib_moment_beam_PQ2.plot_all(L, B1, name)
+    a = matplotlib_moment_beam_PQ2.test_all(L, B1, name)
+    b = ['0.0', '600.0', '0.0', '1800.0', 6, '16200.0']
+    assert  a == b
+test_59()

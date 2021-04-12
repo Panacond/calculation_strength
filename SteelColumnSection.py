@@ -107,9 +107,9 @@ l\\bar_xmax=7.6/l\\bar_x**2
 \phi=1'''
         txt.c1(t)
     t='''Использование по прочности составит:
-K_1=\sigma/R_y
+k_1=\sigma/R_y
 Проверка устойчивости:
-K_2=N/(\phi*A_s*R_y*\gamma_c)=71.0/(0.74*71.0*2350.0*0.95)*1000=0.61
+k_2=N/(\phi*A_s*R_y*\gamma_c)=71.0/(0.74*71.0*2350.0*0.95)*1000=0.61
 Коэффициент альфа:
 a_2=N/(\phi*A_s*R_y*\gamma_c)=71.0/(0.74*71.0*2350.0*0.95)*1000=0.61
 '''
@@ -122,13 +122,16 @@ a_2=N/(\phi*A_s*R_y*\gamma_c)=71.0/(0.74*71.0*2350.0*0.95)*1000=0.61
     t ='''Предельная гибкость:
 l_u=180-60*a_2=180-60*19.02=143.4
 Коэффициент предельной гибкости:
-K_3=l_x/l_u=73.73/143.4=0.51'''
+k_3=l_x/l_u=73.73/143.4=0.51'''
     txt.c1(t)
     p = txt.finish(name = name)
     # print(p)
     text_print ='\n'.join( p.split('\n')[-12:])
     print(text_print)
     text_file = txt.rezult
+    a = '\nb='
+    b = '\tb='
+    text_file = text_file.replace(a, b)
     return text_file
 
 def main():

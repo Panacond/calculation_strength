@@ -74,7 +74,7 @@ l_1=L_f-2*e_l
 \\xi_q=1+1.5/\eta
 \\xi_c=1+0.3/\eta'''
     txt.c1(t,50)
-    k1, k2, k3 =table_512(txt.numer['\\varphi '])
+    k1, k2, k3 =table_512(txt.numer['\\varphi'])
     t='''
 Безразмерные коэффициенты несущей способности, определяемые по таблице 5.12 в 
 зависимости от расчетного значения угла внутреннего трения грунта
@@ -110,6 +110,7 @@ k=P_0/N_u
     t='\\xi_c \\times c_I \\times 10^2) \\times 10^3='
     text_file = text_file.replace(t,t +'\n=')
     text_file = text_file.replace('уровней ответственности\n\\gamma_n','уровней ответственности \\gamma_n')
+    text_file = text_file.replace('\gamma_c=',' \gamma_c=')
     return text_file
 
 def main():

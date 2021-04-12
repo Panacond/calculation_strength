@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # исходные данные для эпюры поперечных сил и моментов от сил действующих на балку
 # подавать значения, силы и их положение и длину балки
 class Power(object):
-    '''Сила принимает величину и полжение'''
+    '''Сила принимает величину и положение'''
     def __init__(self, P, x):
         self.P = P
         self.x = x
@@ -74,10 +74,10 @@ class Shared_forse(object):
         R2 = (self.q*self.a*(self.x + self.a / 2) - Ma + Mb )/ beam.L 
         return R2
 class Graph(object):
-    # 'Балка задается длина и схема (0 шарнирная, 1 с одной жестой опорой, 2 с обоими жесткими
+    # 'Балка задается длина и схема (0 шарнирная, 1 с одной жесткой опорой, 2 с обоими жесткими
     # '3 консольная) и добавляются классы сил, и выдает списки значений'
     def __init__(self, L, S):
-        # Задать длину балки
+        # Задать длину балки и схему
         self.points = [] # поперечные силы
         self.sharedq = [] # распределенные силы
         self.L = L
@@ -86,6 +86,7 @@ class Graph(object):
         self.R2 = 0
         self.cross_power = []
         self.bending_moment = []
+        self.deflections = []
         self.S = S
         self.Ma = 0
         self.Mb = 0
@@ -99,6 +100,7 @@ class Graph(object):
             self.point_x.append(point.x+0.01)
         self.point_x.sort()
     def addQ(self, q, x, a):
+        'Добавить распределенную нагрузку (кгс) точка начала (м), длина нагрузки (м)'
         sharedq1 = Shared_forse(q, x, a)
         self.sharedq.append(sharedq1)
         if sharedq1.x != self.point_x:
@@ -107,6 +109,7 @@ class Graph(object):
             self.point_x.append(sharedq1.x + sharedq1.a)
         self.point_x.sort()
     def ep(self):
+        'Построение эпюр'
         self.Ma, self.Mb = 0, 0
         for i in self.points:
             Ma, Mb = i.support_moment(self)
@@ -126,7 +129,8 @@ class Graph(object):
             self.R2 += i.R1(self)
         for i in self.sharedq:
             self.R2 += i.R2(self)
-        self.cross_power = []
+        # self.cross_power = []
+        # создание списка значений поперечных сил
         for x in self.point_x:
             P = self.R1
             for point in self.points:
@@ -138,7 +142,8 @@ class Graph(object):
                 if q.x < x and q.x + q.a > x:
                     P -= q.q*(x - q.x)
             self.cross_power.append(P)
-        self.bending_moment = []
+        # self.bending_moment = []
+        # создание списка значений изгибающих моментов
         for x in self.point_x:
             M = self.R1*x + self.Ma
             for point in self.points:
@@ -150,6 +155,51 @@ class Graph(object):
                if q.x < x and q.x + q.a > x:
                     M -= q.q*(x - q.x)*(x-(q.x + x)/2)
             self.bending_moment.append(M)
+        # создание списка значений прогибов
+        for x in self.point_x:
+            if self.S == 0:
+                Ra=self.R1
+                L=self.L
+                fi=Ra*L**3/6/L
+                for point in self.points:
+                    P=point.P
+                    Px=point.x
+                    c=L-Px
+                    fi -=(P*c**3/6)/L
+                for q in self.sharedq:
+                    q1 = q.q
+                    a = q.x
+                    b = q.a
+                    c= L - a
+                    fi -=(q1*c**4/24)/L
+                    c= L - a - b
+                    fi +=(q1*c**4/24)/L
+                c=x
+                f = -fi*x + Ra*c**3/6
+            # для защемленных балок
+            else:
+                Ra=self.R1
+                Ma=self.Ma
+                c=x
+                f = Ma*c**2/2 + Ra*c**3/6
+                # для всех балок
+            for point in self.points:
+                P=point.P
+                Px=point.x
+                c=x-Px
+                if Px < x :
+                    f -=P*c**3/6
+            for q in self.sharedq:
+                q1 = q.q
+                a = q.x
+                b = q.a
+                c= x - a
+                c1 = x - a - b
+                if a < x:
+                    f -=q1*c**4/24
+                if a + b < x:
+                    f +=q1*c1**4/24
+            self.deflections.append(f)        
     def epQ(self):
         'возврат списка значений поперечных сил'
         self.ep()
@@ -162,12 +212,13 @@ class Graph(object):
         a = self.point_x
         b = self.epQ()
         c = self.epM()
-        return a, b, c
+        d = self.deflections
+        return a, b, c, d
 
 # координаты для построение эпюр
 def epur(x,y):
     x1=[]
-    y1= []
+    y1=[]
     for i in range(len(x)):
         if i == 0:
             x1.append(x[i])
@@ -194,7 +245,8 @@ def plot_G(save, tit, x, y):
     td = str(round(max([abs(min(y)),abs(max(y))]),2))
     min_rezult = str(round(abs(min(y)),2))
     max_rezult = str(round(abs(max(y)),2))
-    plt.title(tit.format(td)) # заголовок
+    tit = tit.replace('{0}', str(td))
+    plt.title(tit) # заголовок
     plt.xlabel("L="+ str(round(max(x),1)) + 'м') # ось абсцисс
     plt.ylabel("Значение") # ось ординат
     plt.grid(True) # включение отображение сетки
@@ -203,6 +255,7 @@ def plot_G(save, tit, x, y):
     plt.plot(x1, y1, x, y2)  # построение графика  
     plt.savefig(str(save)) # сохранение графика
     return min_rezult, max_rezult
+
 def share_paint(x1, x2, t):
     'построение распределенной нагрузки'
     def f_all(xx):
@@ -235,17 +288,42 @@ def initial_graf(L, beam, save):
         q = q.q
         share_paint(x1, x2, round(q,2))
     plt.savefig(str(save)) # сохранение графика
+
+def test_all(L, B1, name):
+    '''для тестирования'''
+    x, Q, M, f = B1.all_ep() # передача значений в графики
+    def max_min(list_input):
+        min_rezult = str(round(abs(min(list_input)),2))
+        max_rezult = str(round(abs(max(list_input)),2))
+        return min_rezult, max_rezult
+    Qmin, Qmax = max_min(list_input = Q)
+    t='Эпюра изгибающих моментов максмальное значение \n M ={0} кгс*м'
+    
+    M =[round(-i,2) for i in M]
+    Mmin, Mmax = max_min(list_input= M)
+
+    fmin, fmax = max_min(list_input= f)
+    stress = [Qmin, Qmax, Mmin, Mmax, L, fmin]
+    # stress = [Qmin, Qmax, Mmin, Mmax, L]
+    return stress
+
 def plot_all(L, B1, name):
     '''построение всех графиков одной функцией'''
-    x, Q, M = B1.all_ep() # передача значений в графики
+    x, Q, M, f = B1.all_ep() # передача значений в графики
     t = 'Схема загружения балки'
     initial_graf(L = L, beam = B1, save = name +'1'  )
     t='Эпюра поперечных сил максмальное значение Q ={0} кгс'
-    Qmin, Qmax = plot_G(save = name + '2' +  ' Q', tit = t, x = x, y = Q)
+    Qmin, Qmax = plot_G(save = name + '2' +  'Q', tit = t, x = x, y = Q)
     t='Эпюра изгибающих моментов максмальное значение \n M ={0} кгс*м'
-    M =[-i for i in M]
-    Mmin, Mmax = plot_G(save = name + '3' +  ' M', tit = t, x = x, y = M)
-    stress = [Qmin, Qmax, Mmin, Mmax, L]
+    
+    M =[round(-i,2) for i in M]
+    Mmin, Mmax = plot_G(save = name + '3' +  'M', tit = t, x = x, y = M)
+
+    t=r'Эпюра прогибов максмальное значение $f= {0} \times  \frac{10^9 \times кгс \times мм^3 }{EI}$'
+    fmin, fmax = plot_G(save = name + '4' +  'f', tit = t, x = x, y = f)
+    stress = [Qmin, Qmax, Mmin, Mmax, L, fmin]
+    # матрица прогибов
+    table_bending_f=[[x],[f]]
     return stress
 
 def replase_point(k):
@@ -258,15 +336,30 @@ def replase_point(k):
 
 #Основная программа
 def main():
-    L = 6
-    B1 = Graph(L = L ,S = 2) # задание балки
-    B1.addP(1, 1) # добавление силы, величина, координатаQ, от левого конца балки
-    B1.addP(2, 4)
-    B1.addQ(1,2,2) # добавление распределенной нагрузки, сила, координата, длина приложения
     name ='1Балка'
+    L = 6
+    B1 = Graph(L = L ,S = 0) # задание балки
+    # B1.addP(1200, 3) # добавление силы, величина, координатаQ, от левого конца балки
+    B1.addQ(100,0,6) # добавление распределенной нагрузки, сила, координата, длина приложения
+    plot_all(L, B1, name)
+    name ='2Балка'
+    B1 = Graph(L = L ,S = 1)
+    B1.addP(1200, 4)
+    B1.addQ(100,2,2)
+    plot_all(L, B1, name)
+    name ='3Балка'
+    B1 = Graph(L = L ,S = 2)
+    B1.addQ(100,2,2)
+    B1.addP(1200, 4)
+    plot_all(L, B1, name)
+    name ='4Балка'
+    B1 = Graph(L = L ,S = 3)
+    B1.addQ(100,2,2)
+    B1.addP(1200, 4)
     plot_all(L, B1, name)
 
 def plot_csv_file(f, name, dict_load):
+    # f-таблица расчета, name, dict_load
     # печать из csv файла замена букв на значения из таблицы
     L = replase_point(f[1][2])
     S = int(f[0][2])
@@ -308,12 +401,15 @@ def plot_csv_file(f, name, dict_load):
     stress = plot_all(L, B1, name)
     return stress
             
-
 # Построение графиков
 if __name__ == '__main__':
-    # main()
-    name ='2Балка'
-    f =[['Усилия', 'схема', '1', '', '', ''], ['Длина балки м', 'L=', '6', '', '', ''], ['Q', 'Q1', '0', 'L', '1', ''], ['P', '500', '2', '', '', ''], ['P', 'Q2', 'L', '0.5', '', '']]
-    dict_load = {'Q1': 500, 'Q2': 550, 'Q3': 700, 'Q4': 790}
-    stress = plot_csv_file(f, name, dict_load)
-    print(stress)
+    main()
+    # name ='2Балка'
+    # f =[['Усилия', 'схема', '0', '', '', ''], 
+    #     ['Длина балки м', 'L=', '6', '', '', ''], 
+    #     ['Q', 'Q1', '0', 'L', '1', ''], 
+    #     ['P', '500', '2', '', '', ''], 
+    #     ['P', 'Q2', 'L', '0.5', '', '']]
+    # dict_load = {'Q1': 500, 'Q2': 550, 'Q3': 700, 'Q4': 790}
+    # stress = plot_csv_file(f, name, dict_load)
+    # print(stress)
