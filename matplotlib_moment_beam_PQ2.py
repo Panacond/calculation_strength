@@ -301,7 +301,6 @@ def test_all(L, B1, name):
     
     M =[round(-i,2) for i in M]
     Mmin, Mmax = max_min(list_input= M)
-
     fmin, fmax = max_min(list_input= f)
     stress = [Qmin, Qmax, Mmin, Mmax, L, fmin]
     # stress = [Qmin, Qmax, Mmin, Mmax, L]
@@ -320,11 +319,21 @@ def plot_all(L, B1, name):
     Mmin, Mmax = plot_G(save = name + '3' +  'M', tit = t, x = x, y = M)
 
     t=r'Эпюра прогибов максмальное значение $f= {0} \times  \frac{10^9 \times кгс \times мм^3 }{EI}$'
-    fmin, fmax = plot_G(save = name + '4' +  'f', tit = t, x = x, y = f)
+    fmin, fmax = plot_G(save = name + '4' +'f', tit = t, x = x, y = f)
     stress = [Qmin, Qmax, Mmin, Mmax, L, fmin]
     # матрица прогибов
     table_bending_f=[[x],[f]]
-    return stress
+    return stress, table_bending_f
+
+def plot_f(name, x, y, fp):
+    'Построение эпюры прогибов в мм'
+    'значения по х, значения у, прогиб f из расчета'
+    ymax=min(y)
+    k=ymax/fp
+    f=list(map(lambda x:-1*x/k, y))
+    name=name.replace(' ', '_')
+    t=r'Эпюра прогибов максмальное значение f={0} мм'
+    fmin, fmax = plot_G(save = name + '4' +'f', tit = t, x = x, y = f)
 
 def replase_point(k):
     k = str(k)
@@ -398,8 +407,8 @@ def plot_csv_file(f, name, dict_load):
             else:
                 c =replase_point(i[2])
             B1.addP(a,c)
-    stress = plot_all(L, B1, name)
-    return stress
+    stress, table_bending_f = plot_all(L, B1, name)
+    return stress, table_bending_f
             
 # Построение графиков
 if __name__ == '__main__':

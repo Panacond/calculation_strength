@@ -77,7 +77,7 @@ def replace_const(text):
     key_dict = list(i_dict)
     for k in key_dict:
         new_k= ' $' + i_dict[k] + '$ '
-        text = text.replace(k,new_k) 
+        text = text.replace(k,new_k)
     return text
 
 def replace_signs(text_file):
@@ -142,11 +142,14 @@ def replace_signs(text_file):
 
 def find_max_K(text):
     # поиск максимального коэффициента
-    find_concrete = re.findall(r'(\nk(_\d)?=)([^=]*=){2}(.*)', text)
+    find_concrete = re.findall(r'(k(_\d)?=)([^=]*=){0,2}([\d\.]*)', text)
     k = 0
     try:
         for i in find_concrete:
-            i = float(i[3])
+            try:
+                i = float(i[3])
+            except:
+                i=0
             if i > k:
                 k = i
     except:
@@ -178,7 +181,7 @@ class Doc(object):
             self.title
         except:
             self.title = '________ '
-        self.describle = 'Рассматриваемый элемент ' + self.title[:1].lower() + self.title[1:] +  ' '+ self.describle + '\n'
+        self.describle = 'Рассматриваемый элемент - ' + self.title[:1].lower() + self.title[1:] +  ' '+ self.describle + '\n'
         self.markdown += self.describle
     
     def addImage(self, image):
@@ -350,8 +353,6 @@ def save_text():
 def main():
     # тестовые данные
     name = 'Плита основное сочетание нагрузок'
-    
-
 
     # text_rezult вместо text_calc
     loads =  [['Вид нагрузки', 'Ед. изм.', 'Нормативная нагрузка', 'Коэффициент надежности по нагрузке', 'Расчетная нагрузка'],
@@ -380,11 +381,9 @@ def main():
         ['Всего постоянные ', 'кг/м.кв', 760, '', 839], 
         ['Сумма всех нагрузок', 'кг/м.кв', 1060, '', 1199]]
 
-
     title ='Монолитная ЖБ плита в осях «21-22/М-Н» на отм. +14,900. Расчет на прочность, основное сочетание нагрузок, без учета сейсмических нагрузок с учетом усиления плиты.'
 
     describle = 'Длина элемента 5,6 м. Толщина плиты 200 мм. Материал монолитный железобетон класса В20 W6 F150 ГОСТ 26633-2015. Плита снизу усилена металлическими накладками с шагом 1000 мм. Сечение накладки 200х10(h) мм. Марка стали накладок С245.'
-
  
     document = Doc(name=name)
     # document.addTitle(title=title)

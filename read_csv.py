@@ -10,7 +10,7 @@ def read_file(a):
             l = l + [row]
     return l
 
-MT = read_file('формулы файл')
+MT = read_file('Теплотехнический для Москвы файл')
 
 print(MT)
 table = MT

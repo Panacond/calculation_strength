@@ -14,7 +14,10 @@ def read_file(a):
 def tabl_taxt(tabl):
     text_file = ''
     for i in tabl:
-        text_file += i[0] + '\t' + i[1] + i[2] + '\n'
+        if len(i)==1:
+            text_file += i[0] + '\n'
+        else:
+            text_file += i[0] + '\t' + i[1] + i[2] + '\n'
     return text_file
 
 def calculation(name, text_file):
