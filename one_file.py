@@ -92,6 +92,8 @@ class ListCalc(object):
         self.tabl_load = {'Q1':0,'Q2':0,'Q3':0,'Q4':0}
         # моменты из расчета эпюр
         self.tabl_moment = {'S1':0,'S2':0,'S3':0,'S4':0, 'S5':0, 'S6':0}
+        # таблицы прогибов для построения эпюры прогибов
+        self.tabl_bending = []
         # результаты расчетов
         self.tabl_calc = 'tabl_calc'
         # создание документа
@@ -144,7 +146,7 @@ class ListCalc(object):
     def add_epur(self, table):
         # Создание картинок эпюр
         graph = matplotlib_moment_beam_PQ2.plot_csv_file
-        stress = graph(f = table, name = self.name, dict_load = self.tabl_load)
+        stress, self.tabl_bending = graph(f = table, name = self.name, dict_load = self.tabl_load)
         # передача значений в словарь
         key = list(self.tabl_moment)
         for i, x in enumerate(stress):
@@ -155,6 +157,7 @@ class ListCalc(object):
         # замена значений в таблице исходных данных
         table = substituting_dictionary_values(dictionary = self.tabl_load, table = table)
         table = substituting_dictionary_values(dictionary = self.tabl_moment, table = table)
+        table = substituting_dictionary_values(dictionary = self.text_calc, table = table)
         # добавление вычислений
         tabl_stress = table
         name = self.name
@@ -172,6 +175,9 @@ class ListCalc(object):
         if tabl_stress[0][0]=='SBR':
             import SteelBeamRol
             text_rezult = SteelBeamRol.SBR(name = name, tabl = tabl_stress[1:] )
+        if tabl_stress[0][0]=='SBA':
+            import SteelBeamAll
+            text_rezult = SteelBeamAll.SBR(name = name, tabl = tabl_stress[1:] )
         if tabl_stress[0][0]=='SBS':
             import SteelBeamSection
             text_rezult = SteelBeamSection.SBS(name = name, tabl = tabl_stress[1:] )
@@ -228,7 +234,14 @@ class ListCalc(object):
                 # метод write записывает в файл, ассоцированный с переменной f, заданную строку
                 f.write(text_rezult)
         self.tabl_calc = text_rezult
-        # print(text_rezult)
+        # постороение эпюры прогибов в мм
+        if 'f_p=' in self.tabl_calc:
+            find_bending = re.search(r'(f_p)(.*=)([0-9.]*)', self.tabl_calc).group(3)
+            find_bending = float(find_bending)
+            x=self.tabl_bending[0][0]
+            y=self.tabl_bending[1][0]
+            # построение графика прогибов
+            matplotlib_moment_beam_PQ2.plot_f(name=name,x=x,y=y,fp=find_bending)
         # получение и передача данных для последующего расчета и удаление их из результатов
         self.text_calc = read_save(text=self.tabl_calc, dictionarity=self.text_calc, expression=r'(F[0-9])(.*=)([0-9.]*)')
         self.tabl_calc = re.sub(r'(F[0-9])(=)(.*)', '', self.tabl_calc)
@@ -243,7 +256,6 @@ class ListCalc(object):
         self.document.save()
         print(self.final_text)
         return self.final_text
-
 
 def main2():
     # для расчета общих файлов рисунки и md не удаляются

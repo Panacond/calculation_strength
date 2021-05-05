@@ -35,3 +35,28 @@ def write_filesAnd_calc(end_of_file_name, calculation):
         text_file = calculation(name, text_file)
         from string_calculation import write_file
         write_file(name,text_file)
+
+# сохранение csv в xlsx
+# import pandas as pd
+# import numpy as np
+# # Reading the csv file
+# df_new = pd.read_csv('Names.csv')
+  
+# # saving xlsx file
+# GFG = pd.ExcelWriter('Names.xlsx')
+# df_new.to_excel(GFG, index = False)
+# GFG.save()
+from pandas.io.excel import ExcelWriter
+import pandas
+import os
+from glob import glob
+
+def process(ew):
+    # os.chdir(path) # note this is a process-wide change
+    for csv_file in glob('*.csv'):
+        pandas.read_csv(csv_file).to_excel(ew, index = False, header = True, sheet_name=csv_file[:-4], encoding='utf-8')
+
+def csv_in_xlsx():
+    with ExcelWriter('all_calculation.xlsx') as ew:
+        process(ew)
+csv_in_xlsx()
