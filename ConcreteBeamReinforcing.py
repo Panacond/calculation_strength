@@ -26,7 +26,6 @@ def calculation(name, text_file):
     t = '''Определение несущей способности элемента по прочности.
 Определение h_0:
 h_0=h_b-a_1
-Ширина железобетонного элемента (мм):
 3.21. Определение коэффициента a_m по формуле (3.22)
 a_m=(M_r*10000)/(R_b*b_1*h_0^2)
 '''
@@ -71,7 +70,7 @@ k=A_s/A_i'''
     print(text_print)
     text_file = txt.rezult
     # замена текста
-    # text_file = text_file.replace('\ne_r=',';    e_r=')
+    text_file = text_file.replace('\ne_r=','    e_r=')
     text_file = text_file.replace('класса\nВ','класса В')    
     return text_file
 

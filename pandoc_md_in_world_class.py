@@ -100,7 +100,7 @@ def replace_signs(text_file):
             n1=i.find('=')
             n2=i.rfind('=')
             if n2 != n1:
-                # правка по : и уделение после : пробела
+                # правка по : и удаление после : пробела
                 if ':' in i:
                     list_string=i.split(':')
                     list_string[0] = replace_text( text= list_string[0])
@@ -142,7 +142,9 @@ def replace_signs(text_file):
 
 def find_max_K(text):
     # поиск максимального коэффициента
-    find_concrete = re.findall(r'(k(_\d)?=)([^=]*=){0,2}([\d\.]*)', text)
+    # ([^_]k(_\d)?=)([^=]*=){0,2}([\d\.]*) новое float(i[3])
+    # (k(_\d)?=)([^=]*=){0,2}([\d\.]*) старое выражение float(i[3])
+    find_concrete = re.findall(r'([^_]k(_\d)?=)([^=]*=){0,2}([\d\.]*)', text)
     k = 0
     try:
         for i in find_concrete:
@@ -271,7 +273,7 @@ class Doc(object):
             self.markdown += '**Вывод:**\n\n'
             self.markdown +='**' + self.describle + '**\n\n'
             # поиск максимального коэффициента
-            k = find_max_K(self.text_calc)
+            k = find_max_K(self.markdown) #text_calc
             if k < 1:
                 text1 ='''**На элемент приложены действующие нагрузки, по действующим нормативным документам. Определены внутренние усилия и напряжения от действующих нагрузок и возникающие напряжения в элементе. Условие прочности выполняется. Коэффициент использования k={0} < 1, что удовлетворяет требованиям к надежности конструкции.**'''
             else:

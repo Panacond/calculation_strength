@@ -146,6 +146,8 @@ class Result_text(object):
 |{0}.|{1}| k={2} | Прочность элемента, под действием наиболее неблагоприятного сочетания полных постоянных и временных расчетных нагрузок обеспечена. Коэффициент использования по наиболее неблагоприятному критерию k={3} (недонапряжение {4}%).|'''
         self.row_table1b = '''
 |{0}.|{1}| k={2}| Прочность элемента, под действием наиболее неблагоприятного сочетания полных постоянных и временных расчетных нагрузок не обеспечена. Коэффициент использования по наиболее неблагоприятному критерию k={3} (перенапряжение {4}%).|'''
+        self.row_table1c = '''
+|{0}.|{1}| k={2}| Состав теплоограждающих конструкций: {3} |'''
     def add_text(self, text):
         # добавить текст
         self.text = text
@@ -182,22 +184,30 @@ class Result_text(object):
             if k_number < 1:
                 percent= 100-k_number*100
             else:
-                percent= k_number*100 - 100
+                percent= round(k_number*100 - 100)
         except:
             k = 0
             percent = 0
             k_number = 0
-        # добавление коэффициента использования
+        # добавление коэффициента использования в таблицу
         k=str(k).replace('.',',')
         percent_text = str(percent)
         percent_text = percent_text.replace('.',',')
-        if k_number < 1:
+        try:
+            structure = re.search(r'(Состав теплоограждающих конструкций: )(.*)(\r\n)', self.text).group(2)
+        except:
+            structure = ' - '
+        if "Теплотехнический расчет" in self.text:
+            row_table = self.row_table1c.format(self.number, title, k, structure)
+            # row_table = self.row_table1a.format(self.number, title, k, k, structure)
+        elif k_number < 1:
             row_table = self.row_table1a.format(self.number, title, k, k, percent_text)
         else:
             row_table = self.row_table1b.format(self.number, title, k, k, percent_text)
         self.part1 += row_table
         # добавление расчета
         self.part3 += '\n\n' + self.text + '\n\n'
+
     def result(self):
         # общий итоговый отчет
         text_result = self.part1

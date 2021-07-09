@@ -165,68 +165,80 @@ class ListCalc(object):
         if tabl_stress[0][0]=='CBR':
             import ConcreteBeamReinforcing
             text_rezult = ConcreteBeamReinforcing.CBR(name = name, tabl = tabl_stress[1:] )
-        if tabl_stress[0][0]=='CBT':
+        elif tabl_stress[0][0]=='CBT':
             import ConcreteTBeamReinforcing
             text_rezult = ConcreteTBeamReinforcing.CBR(name = name, tabl = tabl_stress[1:] )
-        if tabl_stress[0][0]=='CBP':
+        elif tabl_stress[0][0]=='CBP':
             import ConcreteBeamPretense
             text_rezult = ConcreteBeamPretense.CBP(name = name, tabl = tabl_stress[1:] )
         # стальные балки и колонны
-        if tabl_stress[0][0]=='SBR':
+        elif tabl_stress[0][0]=='SBR':
             import SteelBeamRol
             text_rezult = SteelBeamRol.SBR(name = name, tabl = tabl_stress[1:] )
-        if tabl_stress[0][0]=='SBA':
+        elif tabl_stress[0][0]=='SBA':
             import SteelBeamAll
             text_rezult = SteelBeamAll.SBR(name = name, tabl = tabl_stress[1:] )
-        if tabl_stress[0][0]=='SBS':
+        elif tabl_stress[0][0]=='SBS':
             import SteelBeamSection
             text_rezult = SteelBeamSection.SBS(name = name, tabl = tabl_stress[1:] )
-        if tabl_stress[0][0]=='SCS':
+        elif tabl_stress[0][0]=='SCS':
             import SteelColumnSection
             text_rezult = SteelColumnSection.SBS(name = name, tabl = tabl_stress[1:] )
-        if tabl_stress[0][0]=='SBM':
+        elif tabl_stress[0][0]=='SBM':
             import SteelColumnMoment
             text_rezult = SteelColumnMoment.SBS(name = name, tabl = tabl_stress[1:] )
+        # стальные узлы
+        elif tabl_stress[0][0]=='SVR':
+            import MetalNodesCalculation
+            text_rezult = MetalNodesCalculation.SVR(name = name, tabl = tabl_stress[1:] )
+        elif tabl_stress[0][0]=='BSR':
+            import MetalNodesCalculation
+            text_rezult = MetalNodesCalculation.BSR(name = name, tabl = tabl_stress[1:] )
+        elif tabl_stress[0][0]=='BSM':
+            import MetalNodesCalculation
+            text_rezult = MetalNodesCalculation.BSM(name = name, tabl = tabl_stress[1:] )
         # деревянные конструкции
-        if tabl_stress[0][0]=='WBS':
+        elif tabl_stress[0][0]=='WBS':
             import WoodBeamSection
             text_rezult = WoodBeamSection.WBS(name = name, tabl = tabl_stress[1:] )
-        if tabl_stress[0][0]=='WCS':
+        elif tabl_stress[0][0]=='WCS':
             import WoodColumnSection
             text_rezult = WoodColumnSection.WBS(name = name, tabl = tabl_stress[1:] )
-        if tabl_stress[0][0]=='WCC':
-            import WoodColumnCircle
-            text_rezult = WoodColumnCircle.WBS(name = name, tabl = tabl_stress[1:] )
-        if tabl_stress[0][0]=='WBL':
+        elif tabl_stress[0][0]=='WBL':
             import WoodBeamSectionLVL
             text_rezult = WoodBeamSectionLVL.WBS(name = name, tabl = tabl_stress[1:] )
+        elif tabl_stress[0][0]=='WCM':
+            import WoodColumnMoment
+            text_rezult = WoodColumnMoment.WBS(name = name, tabl = tabl_stress[1:] )
         # фундаменты
-        if tabl_stress[0][0]=='BRG':
+        elif tabl_stress[0][0]=='BRG':
             import BaseResistanceGround
             text_rezult = BaseResistanceGround.BRG(name = name, tabl = tabl_stress[1:] )
-        if tabl_stress[0][0]=='BFG':
+        elif tabl_stress[0][0]=='BFG':
             import BaseFallout
             text_rezult = BaseFallout.BRG(name = name, tabl = tabl_stress[1:] )
-        if tabl_stress[0][0]=='HDP':
+        elif tabl_stress[0][0]=='HDP':
             import hangingDrillingPile
             text_rezult = hangingDrillingPile.FIN(name = name, tabl = tabl_stress[1:] )
-        if tabl_stress[0][0]=='FSB':
+        elif tabl_stress[0][0]=='FSB':
             import FoundationStrengthBase
             text_rezult = FoundationStrengthBase.FIN(name = name, tabl = tabl_stress[1:] )
         # бетонные и жб колонны
-        if tabl_stress[0][0]=='CCN':
+        elif tabl_stress[0][0]=='CCN':
             import ConcreteColumnNoArm
             text_rezult = ConcreteColumnNoArm.CBR(name = name, tabl = tabl_stress[1:] )
-        if tabl_stress[0][0]=='CCR':
+        elif tabl_stress[0][0]=='CCR':
             import ConcreteColumnReinforced
             text_rezult = ConcreteColumnReinforced.CBR(name = name, tabl = tabl_stress[1:] )
-        if tabl_stress[0][0]=='SCA':
+        elif tabl_stress[0][0]=='SCA':
             import FormulaStringCalculation
             text_rezult = FormulaStringCalculation.CBR(name = name, tabl = tabl_stress[1:] )
         # теплотехнический расчет для Москвы
-        if tabl_stress[0][0]=='TCS':
+        elif tabl_stress[0][0]=='TCS':
             import ThermalCalculationStatic
             text_rezult = ThermalCalculationStatic.CBR(name = name, tabl = tabl_stress[1:] )
+        else:
+            text_rezult = tabl_stress[0][0]
         # запись в текстовые файлы, для проверок поставить 1 для печати, и 0 для выключения
         switch = 0
         if switch == 1:
@@ -243,7 +255,7 @@ class ListCalc(object):
             # построение графика прогибов
             matplotlib_moment_beam_PQ2.plot_f(name=name,x=x,y=y,fp=find_bending)
         # получение и передача данных для последующего расчета и удаление их из результатов
-        self.text_calc = read_save(text=self.tabl_calc, dictionarity=self.text_calc, expression=r'(F[0-9])(.*=)([0-9.]*)')
+        self.text_calc = read_save(text=self.tabl_calc, dictionarity=self.text_calc, expression=r'(F[0-9])(.*=)([-0-9.]*)')
         self.tabl_calc = re.sub(r'(F[0-9])(=)(.*)', '', self.tabl_calc)
         # добавление вычислений в документ
         self.document.addText_calc(text_calc=self.tabl_calc)

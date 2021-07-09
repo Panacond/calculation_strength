@@ -139,6 +139,16 @@ def table_load(l):
     len_dop = len(list_name)
     return MT, len_dop
 
+def table_Q(MT):
+    # Возвращение результатов для передачи в другие расчеты
+    Q1 = MT[-3:-1][0][-3]
+    Q2 = MT[-3:-1][0][-1]
+    Q3 = MT[-2:][0][-3]
+    Q4 = MT[-2:][0][-1]
+    Q = [Q1, Q2, Q3, Q4]
+    Q = [Q1, Q2, Q3, Q4]
+    return Q
+
 # все в итоговую функцию
 def calc(MT, name):
     # создаем новый excel-файл
@@ -315,5 +325,7 @@ def load_donload(l, name_file):
     name = name_file[:-4]
     l = read_load(l)
     MT = table_load(l)[0]
-    Q, MT = calc(MT = MT, name = name)
+    # функция печати таблиц в ексель откючена
+    # Q, MT = calc(MT = MT, name = name)
+    Q = table_Q(MT=MT)
     return Q, MT

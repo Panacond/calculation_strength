@@ -85,11 +85,13 @@ a=8*((L_ef*100*t_p)/(h_0*b))**2*(1+(0.5*(h_0-2*t_p)*t_s**3)/(b*t_p**3))
 При значениях  \\varphi_1 > 0.85:
 \\varphi_b=0.68+0.21*\\varphi_1'''
     else:
-        t='''При значениях  \\varphi_1 < 0.85:
+        t='''
+При значениях  \\varphi_1 < 0.85:
 \\varphi_b=\\varphi_1'''
     txt.c1(t, 60)
     if txt.numer['\\varphi_1'] > 1:
-        t ='''При значениях \\varphi_1 > 1:
+        t ='''
+При значениях \\varphi_1 > 1:
 \\varphi_b=1'''
         txt.c1(t)
     text_file = txt.rezult

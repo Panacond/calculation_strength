@@ -48,12 +48,33 @@ def func_interpoly(x, y):
         table_Y.append(interpoly)
     f = numpy.interp(y,table_y,table_Y)
     return round(f)
+
+def tableG9(x):
+    # Таблица Г9 СП 16 металлические конструкции
+    # Площади сечений болтов брутто и нетто
+    X=[16,18,20,22,24,27,30,36,42,48]
+    Y=[2.01,2.54,3.14,3.80,4.52,5.72,7.06,10.17,13.85,18.09]
+    A_b = numpy.interp(x,X,Y)
+    Y=[1.57,1.92,2.45,3.03,3.53,4.59,5.61,8.16,11.20,14.72]
+    A_bn = numpy.interp(x,X,Y)
+    return A_b, A_bn
+
+def tableG5(x):
+    # Таблица Г5 СП 16 металлические конструкции
+    # Расчетные сопротивления срезу и растяжению
+    X=[5.6,5.8,8.8,10.9,12.9]
+    Y=[210,210,330,415,425]
+    R_bs = numpy.interp(x,X,Y)*10
+    Y=[225,225,450,560,560]
+    R_bt = numpy.interp(x,X,Y)*10
+    return R_bs, R_bt
+
 if __name__ == '__main__':
     x=14.1
     y=0.92
     a = func_interpoly(x, y)
     print(a)
 
-table_x = in_number(table1[0])
-print(table_x)
+# table_x = in_number(table1[0])
+
 
