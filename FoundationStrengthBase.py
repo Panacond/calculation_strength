@@ -1,23 +1,6 @@
 # чтение из csv файла данных и расчет висячей буровой сваи
-import os, fnmatch, csv
-import string_calculation
-
-def read_file(a):
-    a = str(a)
-    l=[]
-    with open(a,'r',newline='') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            l = l + [row]
-    return tabl_taxt(l)
-
-def tabl_taxt(tabl):
-    text_file = ''
-    for i in tabl:
-        text_file += i[0] + '\t' + i[1] + i[2] + '\n'
-    return text_file
-
 import numpy
+import string_calculation
 
 def table_512(corner):
     'таблица 5.12 определение коэффициентов N_y , N_q, N_c в зависимости от угла \varphi'
@@ -92,7 +75,7 @@ N_u=b_1*l_1*(N_y*\\xi_y*b_1*\gamma_I+N_q*\\xi_q*\gamma_II*d+N_c*\\xi_c*c_I*10**2
 5.7.2 Расчет оснований по несущей способности производят исходя из условия (5.27)
 F_u=(\gamma_c*N_u)/\gamma_n
 Коэффициент использования фундамента по прочности:
-k=P_0/N_u
+k_1=P_0/N_u
 '''
     t = t.format(k1,k2,k3)
     txt.c1(t,50)
@@ -114,17 +97,8 @@ k=P_0/N_u
     return text_file
 
 def main():
-    # отбор нужных файлов
-    f = []# создание списка файлов и чтение из текущей папки списка файлов
-    for file in os.listdir('.'):
-        if fnmatch.fnmatch(file, '*FSB.csv'):
-            f += [file]
-    for i in f:
-        text_file = read_file(i)
-        name = i[:-7]
-        text_file = calculation(name, text_file)
-        string_calculation.write_file(name, str(text_file))
-    pass
+    from support_function import write_filesAnd_calc
+    write_filesAnd_calc(end_of_file_name='*FSB.csv', calculation = calculation)
 
 if __name__ == '__main__':
     main()

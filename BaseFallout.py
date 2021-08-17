@@ -2,21 +2,6 @@
 import os, fnmatch, csv
 import string_calculation
 
-def read_file(a):
-    a = str(a)
-    l=[]
-    with open(a,'r',newline='') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            l = l + [row]
-    return tabl_taxt(l)
-
-def tabl_taxt(tabl):
-    text_file = ''
-    for i in tabl:
-        text_file += i[0] + '\t' + i[1] + i[2] + '\n'
-    return text_file
-
 def calculation(name, text_file):
     txt = string_calculation.Calc()
     t = text_file
@@ -255,18 +240,8 @@ k_1=P_r/R_f'''
 
 
 def main():
-    # отбор нужных файлов
-    f = []# создание списка файлов и чтение из текущей папки списка файлов
-    for file in os.listdir('.'):
-        if fnmatch.fnmatch(file, '*BFG.csv'):
-            f += [file]
-    for i in f:
-        text_file = read_file(i)
-        name = i[:-7]
-        text_file = calculation(name, text_file)
-        # text_print ='\n'.join( text_file.split('\n')[-4:])
-        # print(text_print)
-    pass
+    from support_function import write_filesAnd_calc
+    write_filesAnd_calc(end_of_file_name='*BFG.csv', calculation = calculation)
 
 if __name__ == '__main__':
     main()

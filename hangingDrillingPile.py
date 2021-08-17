@@ -152,7 +152,7 @@ F_d=\gamma_c*(\gamma_cR*R*A+F_s*u)
 Несущая способность грунта (тс)
 F_dk=(\gamma_0*F_d)/(\gamma_n*\gamma_k)
 Коэффициент использования сваи:
-k=N/(F_dk*1000)
+k_1=N/(F_dk*1000)
 '''
     txt.c1(t, 60)
     p = txt.finish(name = name)

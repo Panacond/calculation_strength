@@ -460,7 +460,7 @@ class Window(Frame):
         var2.set(a)
 
         # Версия программы
-        first = Label(text='                                                                         Версия 0.37')
+        first = Label(text='                                                                         Версия 0.38')
         first.pack()
         
         # список выбора
@@ -539,7 +539,7 @@ def main():
     root = Tk()
     app = Window(root)
     root.wm_title("Исходные файлы расчета")
-    root.geometry("350x650")
+    root.geometry("380x650")
     root.mainloop()
 
 if __name__ == '__main__':

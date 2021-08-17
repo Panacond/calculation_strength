@@ -113,6 +113,7 @@ class ListCalc(object):
                 exec(dictionary_functions[first_cell])
             elif len(first_cell) == 3:
                 self.add_calc(table=self.table_now)
+                print('a')
             else:
                 print('ошибка чтения 1 ячейки таблицы')
     def add_title(self, table):
@@ -145,6 +146,10 @@ class ListCalc(object):
         self.final_text +=  last_2_lines(self.loads)
     def add_epur(self, table):
         # Создание картинок эпюр
+        # замена значений в таблице исходных данных
+        table = substituting_dictionary_values(dictionary = self.tabl_load, table = table)
+        table = substituting_dictionary_values(dictionary = self.tabl_moment, table = table)
+        table = substituting_dictionary_values(dictionary = self.text_calc, table = table)
         graph = matplotlib_moment_beam_PQ2.plot_csv_file
         stress, self.tabl_bending = graph(f = table, name = self.name, dict_load = self.tabl_load)
         # передача значений в словарь
@@ -233,6 +238,10 @@ class ListCalc(object):
         elif tabl_stress[0][0]=='SCA':
             import FormulaStringCalculation
             text_rezult = FormulaStringCalculation.CBR(name = name, tabl = tabl_stress[1:] )
+        # расчет кирпичной кладки
+        elif tabl_stress[0][0]=='BRW':
+            import Brickwork
+            text_rezult = Brickwork.CBR(name = name, tabl = tabl_stress[1:] )
         # теплотехнический расчет для Москвы
         elif tabl_stress[0][0]=='TCS':
             import ThermalCalculationStatic
@@ -254,6 +263,8 @@ class ListCalc(object):
             y=self.tabl_bending[1][0]
             # построение графика прогибов
             matplotlib_moment_beam_PQ2.plot_f(name=name,x=x,y=y,fp=find_bending)
+        else:
+            self.document.delEpur()
         # получение и передача данных для последующего расчета и удаление их из результатов
         self.text_calc = read_save(text=self.tabl_calc, dictionarity=self.text_calc, expression=r'(F[0-9])(.*=)([-0-9.]*)')
         self.tabl_calc = re.sub(r'(F[0-9])(=)(.*)', '', self.tabl_calc)
@@ -300,7 +311,12 @@ def main1():
     return fin
 
 def main():
+    # os.chdir('..')
     main1()
+
+# def main():
+#     os.chdir('..')
+#     main2()
 
 if __name__ == '__main__':
     main()

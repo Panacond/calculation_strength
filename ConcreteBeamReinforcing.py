@@ -5,14 +5,17 @@ import string_calculation
 def calculation(name, text_file):
     txt = string_calculation.Calc()
     # словарь характеристик бетона
-    concrete ={10: 6, 15: 8.5, 20: 11.5, 25: 14.5, 30: 17, 35: 19.5, 40: 22, 45: 25, 50: 27.5, 55: 30, 60: 33}
+    concrete ={"7,5":4.5 ,"10": 6, "12,5":7.5 ,"15": 8.5, "20": 11.5, "25": 14.5, "30": 17, "35": 19.5, "40": 22, "45": 25, "50": 27.5, "55": 30, "60": 33}
     # Исходные данные бетон, просто поменять первый все остальные значения заменяться
     t = text_file
     # поиск и замена с помощью регулярных выражений
     import re
-    find_concrete = re.search('В\d\d', t).group()
-    t = re.sub('В\d\d',find_concrete, t)
-    number_concrete = int(find_concrete[1:])
+    change = 'В\d[\d,\.]*\d'
+    find_concrete = re.search(change, t).group()
+    t = re.sub(change,find_concrete, t)
+    number_concrete = str(find_concrete[1:])
+    if '.' in number_concrete:
+        number_concrete = number_concrete.replace('.', ',')
     t += 'R_b='+ str(concrete[number_concrete]) +'\n'
     t=('''Расчет железобетонного элемента
 По пособию по проектированию бетонных и железобетонных конструкций
@@ -63,13 +66,17 @@ A_s=e_r*R_b*b_1*h_0/R_s/100+A_v'''
 Площадь установленной арматуры составит (см^2):
 A_i=(3.14*(D_s*0.1)^2*n_b)/4
 Коэффициент использования по прочности составит:
-k=A_s/A_i'''
+k_1=A_s/A_i'''
     txt.c1(t)
     p = txt.finish(name = name)
     text_print = '\n'.join(p.split('\n')[-2:])
     print(text_print)
     text_file = txt.rezult
     # замена текста
+    # text_file = text_file.replace('\nШирина элемента',' ;   Ширина элемента')
+    # text_file = text_file.replace('\nДиаметр стержней',' ;   Диаметр стержней')
+    text_file = text_file.replace('Определение h_0:\n','Определение h_0:')
+    text_file = text_file.replace('\na_r=',': a_r=')
     text_file = text_file.replace('\ne_r=','    e_r=')
     text_file = text_file.replace('класса\nВ','класса В')    
     return text_file

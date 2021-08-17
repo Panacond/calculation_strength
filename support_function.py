@@ -3,8 +3,7 @@
 import os, fnmatch, csv
 
 def tabl_taxt(tabl):
-    # функция чтения csv файлов
-    # для функции read_file_csv чтение таблиц
+    # функция группирования нужных данных из таблиц
     text_file = ''
     for i in tabl:
         text_file += i[0] + '\t' + i[1] + i[2] + '\n'
@@ -59,4 +58,4 @@ def process(ew):
 def csv_in_xlsx():
     with ExcelWriter('all_calculation.xlsx') as ew:
         process(ew)
-csv_in_xlsx()
+# csv_in_xlsx()

@@ -10,7 +10,7 @@ def read_file(a):
             l = l + [row]
     return l
 
-MT = read_file('Деревянная стойка файл')
+MT = read_file('1250BRW')
 
 print(MT)
 table = MT
@@ -35,4 +35,3 @@ table = MT
 # print(table_x)
 # print(table_y)
 # print(table_Q)
-
