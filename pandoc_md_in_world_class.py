@@ -142,21 +142,33 @@ def replace_signs(text_file):
 
 def find_max_K(text):
     # поиск максимального коэффициента
-    # ([^_]k(_\d)?=)([^=]*=){0,2}([\d\.]*) новое float(i[3])
     # (k(_\d)?=)([^=]*=){0,2}([\d\.]*) старое выражение float(i[3])
-    find_concrete = re.findall(r'([^_]k(_\d)?=)([^=]*=){0,2}([\d\.]*)', text)
+    # ([^_]k(_\d)?=)([^=]*=){0,2}([\d\.]*) новое float(i[3])
+    #([^_]k(_\d)+=)([^=]*=){1,2}([\d\.]{4})
+    # ([^_]k(_\d)+=)([^=]*=){1,2}([\d\.]{3,4})
+    # ([^_]k(_[1-9])+=)([^=]*=){1,2}([\d\.]{3,4})
+    find_concrete = re.findall(r'([^_]k(_\d)+=){1}([^=\n]*=){1,2}([\d\.]{3,4})', text)
     k = 0
     try:
         for i in find_concrete:
             try:
                 i = float(i[3])
             except:
-                i=0
+                i = 0
             if i > k:
                 k = i
     except:
         pass
     return k
+
+def hat_bolt(a,b,c):
+    # self.table_text=hat_bolt(a=j,b=cell_cow,c=self.table_text)
+    # редактирование строк документа жирным
+    if a == 0:
+        c += '|**' + b + '**|'
+    else:
+        c += '**' + b +'**|'
+    return c
 '''объекты документа'''
 class Doc(object):
     # создается документ в который можно добавлять разные элементы и в итоге сохранить все
@@ -205,22 +217,33 @@ class Doc(object):
                 cell_cow = cell_cow.lstrip(' ')
                 cell_cow = cell_cow.rstrip(' ') 
                 if i == 0 :
-                    self.table_text += '**' + cell_cow +'**|'
+                    # hat 
+                    self.table_text=hat_bolt(a=j,b=cell_cow,c=self.table_text)
+                    # self.table_text += '|**' + cell_cow +'**|'
                 elif i == 1:
-                    self.table_text += '*' + cell_cow +'*|'
+                    # hat numer
+                    if j == 0:
+                        self.table_text += '|*' + cell_cow +'*|'
+                    else:
+                        self.table_text += '*' + cell_cow +'*|'
+                    # self.table_text += '|*' + cell_cow +'*|'
                 elif (len(self.loads[i]) == 1 and len(self.loads[i+1]) ==1 and j!=1 ):
-                    self.table_text += '**' + str(cell_cow) +'** |'
+                    self.table_text=hat_bolt(a=j,b=cell_cow,c=self.table_text) 
+                    # self.table_text += '|**' + str(cell_cow) +'** |'
                 elif (len(cell_row) != 1 and self.loads[i][3] == '' and j!=1) :
                     if cell_cow != '':
                         self.table_text += '**' + str(cell_cow) +'** |'
                     else:
-                        self.table_text += '|'
+                        self.table_text += ' |'#'| |'
                 elif len(cell_row) == 1 :
-                    self.table_text += '*' + str(cell_cow) +'*|'
+                    self.table_text += '|*' + str(cell_cow) +'*| | | | |'
                 else:
-                    self.table_text +=  str(cell_cow) +'|'
+                    if j == 0:
+                        self.table_text +='|' +  str(cell_cow) +'|'
+                    else:
+                        self.table_text +='' +  str(cell_cow) +'|'
             if i==0:
-                self.table_text += '\n:---:|:---:|:---:|:---:|:---:| \n'
+                self.table_text += '\n|:---:|:---:|:---:|:---:|:---:| \n'
             else:
                 self.table_text += '\n'
         a, b = self.loads[-1][2], self.loads[-1][4]
@@ -259,6 +282,13 @@ class Doc(object):
         self.text_calc = text_calc
         text = editing_conclusions(self.text_calc)
         self.markdown += replace_signs(text) +'\n'
+
+    def delEpur(self):
+        # удаление эпюр прогибов
+        try:
+            self.markdown = self.markdown.replace('![](' + self.new_name + '4f.png' + ')\n\n', '')
+        except:
+            pass
 
     def addText(self, text):
         # добавление просто текста
@@ -311,6 +341,8 @@ class Doc(object):
             self.save_md()
             # конвертирование в world
             pypandoc.convert_text(self.markdown, format='md', to='docx', outputfile = self.new_name +".docx")
+            # convert to odt
+            pypandoc.convert_text(self.markdown, format='md', to='odt', outputfile = self.new_name +".odt")
         except:
             print('Not name file or not work world 2 ')
 
@@ -320,6 +352,9 @@ class Doc(object):
             os.remove(self.name +'1.png')
             os.remove(self.name +'2Q.png')
             os.remove(self.name +'3M.png')
+        except:
+            pass
+        try:
             os.remove(self.name +'4f.png')
         except:
             pass
@@ -327,6 +362,9 @@ class Doc(object):
             os.remove(self.new_name +'1.png')
             os.remove(self.new_name +'2Q.png')
             os.remove(self.new_name +'3M.png')
+        except:
+            pass
+        try:
             os.remove(self.new_name +'4f.png')
         except:
             pass
@@ -388,18 +426,18 @@ def main():
     describle = 'Длина элемента 5,6 м. Толщина плиты 200 мм. Материал монолитный железобетон класса В20 W6 F150 ГОСТ 26633-2015. Плита снизу усилена металлическими накладками с шагом 1000 мм. Сечение накладки 200х10(h) мм. Марка стали накладок С245.'
  
     document = Doc(name=name)
-    # document.addTitle(title=title)
-    # document.addDescrible(describle=describle)
+    document.addTitle(title=title)
+    document.addDescrible(describle=describle)
     # image= ['План_балки','.png']
     # document.addImage(image=image)
     
     # text_calc = read_file('теплотехника')
     # document.addText(text_calc)
    
-    text_calc = read_file('теплотехника')
-    document.addText_calc(text_calc=text_calc)
+    # text_calc = read_file('теплотехника')
+    # document.addText_calc(text_calc=text_calc)
 
-    # document.addTableLoads(loads=loads)
+    document.addTableLoads(loads=loads)
 
     # document.addEpurImage()
     

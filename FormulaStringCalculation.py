@@ -20,7 +20,7 @@ def tabl_taxt(tabl):
             try:
                 text_file += i[0] + '\t' + i[1] + i[2] + '\n'
             except:
-                text_file += i[0] + '\n' + i[1] + '\n'
+                text_file += i[0] + '\n'
     return text_file
 
 def calculation(name, text_file):

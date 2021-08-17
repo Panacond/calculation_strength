@@ -56,7 +56,11 @@ def word_1():
                 paragraph.add_text(text=text)
                 paragraph.data_search()
         all_text = paragraph.result()
+        pypandoc.convert_text(all_text, format='md', to='md', outputfile = name_excel[:-5] +".md")
+        # версия для windows 
         pypandoc.convert_text(all_text, format='md', to='docx', outputfile = name_excel[:-5] +".docx")
+        # version for linux
+        pypandoc.convert_text(all_text, format='md', to='odt', outputfile = name_excel[:-5] +".odt")
     # отбор файлов csv для удаления лишних файлов
     list_csv = list_file(format='csv')
     for file_csv in list_csv:
